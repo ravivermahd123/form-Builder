@@ -14,6 +14,25 @@
   padding: 0;
   margin: 10px 0;
   background: hsl(0, 0%, 95%) url('https://formbuilder.online/assets/img/noise.png');
+}.form-rendered #build-wrap {
+  display: none;
+}
+
+.render-wrap {
+  display: none;
+}
+
+.form-rendered .render-wrap {
+  display: block;
+}
+
+#edit-form {
+  display: none;
+  float: right;
+}
+
+.form-rendered #edit-form {
+  display: block;
 }
 
 
@@ -28,6 +47,9 @@
         <div id="new-page"></div>
         
       </form>
+      <!-- <div id="build-wrap"></div> -->
+    <div class="render-wrap"></div>
+    <button id="edit-form">Edit Form</button>
       <div class="save-all-wrap"><button id="save-all" type="button">Save All</button></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
@@ -82,6 +104,30 @@
     console.log(allData);
   });
 });
+
+jQuery(function ($) {
+  var fbTemplate = document.getElementById("build-wrap");
+  var options = {
+    onSave: function (evt, formData) {
+      console.log("formbuilder saved");
+      toggleEdit(false);
+      $(".render-wrap").formRender({ formData });
+    }
+  };
+  $(fbTemplate).formBuilder(options);
+});
+
+/**
+ * Toggles the edit mode for the demo
+ * @return {Boolean} editMode
+ */
+function toggleEdit(editing) {
+  document.body.classList.toggle("form-rendered", !editing);
+}
+
+document.getElementById("edit-form").onclick = function () {
+  toggleEdit(true);
+};
   </script>
 </body>
 </html>
