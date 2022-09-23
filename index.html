@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Example formBuilder</title>
+</head>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css
+">
+<style>
+    body {
+  padding: 0;
+  margin: 10px 0;
+  background: hsl(0, 0%, 95%) url('https://formbuilder.online/assets/img/noise.png');
+}
+
+
+</style>
+<body>
+    <form action="" id="form-builder-pages">
+        <ul id="tabs" style ="display: flex;">
+          <li style="list-style-type: none;"><a href="#page-1" style ="background-color: #f2f2f2; padding: 10px; color: black; text-decoration: none; margin: 2px;">Page 1</a></li>
+          <li id="add-page-tab" style="list-style-type: none;"><a href="#new-page" style ="background-color: #f2f2f2; padding: 10px;color: black;text-decoration: none; margin: 2px;">+ Page</a></li>
+        </ul>
+        <div id="page-1" class="fb-editor"></div>
+        <div id="new-page"></div>
+        
+      </form>
+      <div class="save-all-wrap"><button id="save-all" type="button">Save All</button></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <script src="https://formbuilder.online/assets/js/form-builder.min.js"></script>
+  <script>
+  jQuery(($) => {
+  "use strict";
+  var $fbPages = $(document.getElementById("form-builder-pages"));
+  var addPageTab = document.getElementById("add-page-tab");
+  var fbInstances = [];
+
+  $fbPages.tabs({
+    beforeActivate: function (event, ui) {
+      if (ui.newPanel.selector === "#new-page") {
+        return false;
+      }
+    }
+  });
+
+  addPageTab.addEventListener(
+    "click",
+    (click) => {
+      const tabCount = document.getElementById("tabs").children.length;
+      const tabId = "page-" + tabCount.toString();
+      const $newPageTemplate = document.getElementById("new-page");
+      const $newTabTemplate = document.getElementById("add-page-tab");
+      const $newPage = $newPageTemplate.cloneNode(true);
+      $newPage.setAttribute("id", tabId);
+      $newPage.classList.add("fb-editor");
+      const $newTab = $newTabTemplate.cloneNode(true);
+      $newTab.removeAttribute("id");
+      const $tabLink = $newTab.querySelector("a");
+      $tabLink.setAttribute("href", "#" + tabId);
+      $tabLink.innerText = "Page " + tabCount;
+
+      $newPageTemplate.parentElement.insertBefore($newPage, $newPageTemplate);
+      $newTabTemplate.parentElement.insertBefore($newTab, $newTabTemplate);
+      $fbPages.tabs("refresh");
+      $fbPages.tabs("option", "active", tabCount - 1);
+      fbInstances.push($($newPage).formBuilder());
+    },
+    false
+  );
+
+  fbInstances.push($(".fb-editor").formBuilder());
+
+  $(document.getElementById("save-all")).click(function () {
+    const allData = fbInstances.map((fb) => {
+      console.log(fb.actions.getData());
+      return fb.formData;
+    });
+    console.log(allData);
+  });
+});
+  </script>
+</body>
+</html>
